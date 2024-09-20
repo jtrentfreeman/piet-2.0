@@ -1,0 +1,22 @@
+{
+    "tasks": [
+        {
+            "type": "gradle",
+            "id": "c:\\Users\\frejt\\code\\newestPietapp:runapp",
+            "script": "app:run",
+            "description": "Runs this project as a JVM application",
+            "group": "application",
+            "project": "app",
+            "buildFile": "C:\\Users\\frejt\\code\\newestPiet\\app\\build.gradle",
+            "rootProject": "newestPiet",
+            "projectFolder": "c:\\Users\\frejt\\code\\newestPiet",
+            "workspaceFolder": "c:\\Users\\frejt\\code\\newestPiet",
+            "args": "",
+            "javaDebug": false,
+            "problemMatcher": [
+                "$gradle"
+            ],
+            "label": "gradle: app:run"
+        }
+    ]
+}
