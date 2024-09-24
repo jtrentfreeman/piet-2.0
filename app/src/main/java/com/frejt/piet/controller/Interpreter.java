@@ -30,7 +30,8 @@ public class Interpreter {
 
         try {
             Board board = fileReader.convertFileToBoard();
-            BoardRunner.runBoard(board);
+            BoardRunner runner = new BoardRunner(board);
+            runner.runBoard();
             
         } catch (PietExecutionException e) {
             log.error("Board was unable to be read: " + e.getMessage());

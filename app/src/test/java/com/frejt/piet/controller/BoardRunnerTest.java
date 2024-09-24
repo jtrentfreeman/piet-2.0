@@ -27,7 +27,8 @@ public class BoardRunnerTest {
             }
         }
 
-        Integer actual = BoardRunner.findSizeCodel(board, new Block(board, new Codel(0, 0)), new Codel(0, 0));
+        BoardRunner runner = new BoardRunner(board);
+        Integer actual = runner.findSizeCodel(new Block(board, new Codel(0, 0)), new Codel(0, 0));
 
         Integer expected = board.getSizeRow() * board.getSizeCol();
         
@@ -61,7 +62,8 @@ public class BoardRunnerTest {
             }
         }
 
-        Integer actual = BoardRunner.findSizeCodel(board, new Block(board, new Codel(0, 0)), new Codel(0, 0));
+        BoardRunner runner = new BoardRunner(board);
+        Integer actual = runner.findSizeCodel(new Block(board, new Codel(0, 0)), new Codel(0, 0));
 
         Integer expected = board.getSizeRow() + board.getSizeCol()-1;
 
@@ -89,7 +91,8 @@ public class BoardRunnerTest {
             }
         }
 
-        Integer actual = BoardRunner.findSizeCodel(board, new Block(board, new Codel(0, 0)), new Codel(0, 0));
+        BoardRunner runner = new BoardRunner(board);
+        Integer actual = runner.findSizeCodel(new Block(board, new Codel(0, 0)), new Codel(0, 0));
 
         Integer expected = 1;
 
@@ -124,7 +127,8 @@ public class BoardRunnerTest {
         Codel topRightCodel = new Codel(0, board.getSizeCol()-1);
         board.setColor(topRightCodel, PietColor.RED);
 
-        Codel actual = BoardRunner.getNextCodelWhite(board, topLeftCodel, topLeftCodel, 0);
+        BoardRunner runner = new BoardRunner(board);
+        Codel actual = runner.getNextCodelWhite(topLeftCodel, topLeftCodel, 0);
 
         Codel expected = new Codel(topRightCodel);
 
@@ -165,7 +169,8 @@ public class BoardRunnerTest {
         Codel bottomRightCodel = new Codel(board.getSizeRow()-1, board.getSizeCol()-1);
         board.setColor(bottomRightCodel, PietColor.RED);
 
-        Codel actual = BoardRunner.getNextCodelWhite(board, topLeftCodel, topLeftCodel, 0);
+        BoardRunner runner = new BoardRunner(board);
+        Codel actual = runner.getNextCodelWhite(topLeftCodel, topLeftCodel, 0);
 
         Codel expected = new Codel(bottomRightCodel);
 
@@ -206,7 +211,8 @@ public class BoardRunnerTest {
         Codel bottomLeftCodel = new Codel(board.getSizeRow()-1, 0);
         board.setColor(bottomLeftCodel, PietColor.RED);
 
-        Codel actual = BoardRunner.getNextCodelWhite(board, topLeftCodel, topLeftCodel, 0);
+        BoardRunner runner = new BoardRunner(board);
+        Codel actual = runner.getNextCodelWhite(topLeftCodel, topLeftCodel, 0);
 
         Codel expected = new Codel(bottomLeftCodel);
 

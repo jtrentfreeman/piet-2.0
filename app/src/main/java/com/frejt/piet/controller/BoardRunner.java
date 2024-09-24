@@ -19,18 +19,27 @@ public class BoardRunner {
 
     private static final Logger log = LogManager.getLogger(BoardRunner.class);
 
-    private static Program program = Program.getInstance();
-    private static Director director = program.getDirector();
+    private Program program;
+    private Director director;
     
-    /**
+    private Board board;
+
+    public BoardRunner(Board board) {
+        program = Program.getInstance();
+        director = Director.getInstance();
+
+        this.board = board;
+    }
+
+/**
      * Given a {@link Board}, move through the board in order and perform the
      * commands.
      *
      * @param board the Board, holding a grid of {@link Codel}s to be traversed
      */
-    public static void runBoard(Board board) throws PietExecutionException {
+    public void runBoard() throws PietExecutionException {
 
-        BlockSet blocks = prepareForRun(board);
+        BlockSet blocks = prepareForRun();
 
         // the program will end on it's own (hypothetically)
         while(!program.getEnd()) {
@@ -38,20 +47,20 @@ public class BoardRunner {
             blocks.rotateBlocks();
 
             // get the coords of the next Codel
-            Codel nextCodel = getNextCodel(board, blocks.getFirst(), 0);
+            Codel nextCodel = getNextCodel(blocks.getFirst(), 0);
 
             // initiate the newest Codel
             blocks.addBlock(new Block(board, nextCodel));
-            int size = findSizeCodel(board, blocks.getLast(), nextCodel);
+            int size = findSizeCodel(blocks.getLast(), nextCodel);
             board.setVisitedAll(false);
 
             blocks.getLast().setSize(size);
 
             // White codels are a special case
             if (blocks.getLast().getColor().equals(PietColor.WHITE)) {
-                Codel nextNonWhite = getNextCodelWhite(board, nextCodel, blocks.getFirst().getRightTop(), 0);
+                Codel nextNonWhite = getNextCodelWhite(nextCodel, blocks.getFirst().getRightTop(), 0);
                 blocks.set(0, new Block(board, nextNonWhite));
-                blocks.getFirst().setSize(findSizeCodel(board, blocks.getFirst(), nextNonWhite));
+                blocks.getFirst().setSize(findSizeCodel(blocks.getFirst(), nextNonWhite));
                 blocks.remove(1);
 
                 board.setVisitedAll(false);
@@ -80,7 +89,7 @@ public class BoardRunner {
      * @param board the board being ran during execution
      * @return a list holding the first {@link Block} of the program.
      */
-    public static BlockSet prepareForRun(Board board) {
+    public BlockSet prepareForRun() {
 
         BlockSet blockSet;
 
@@ -89,7 +98,7 @@ public class BoardRunner {
         Codel first = new Codel(0, 0);
 
         Block initBlock = new Block(board, first);
-        initBlock.setSize(findSizeCodel(board, initBlock, first));
+        initBlock.setSize(findSizeCodel(initBlock, first));
 
         board.setVisitedAll(false);
 
@@ -107,7 +116,7 @@ public class BoardRunner {
      * @param coord the Codel in the block to stat execution from
      * @return the size of the Block
      */
-    public static Integer findSizeCodel(Board board, Block block, Codel coord) {
+    public Integer findSizeCodel(Block block, Codel coord) {
         // codel is uninitiated, so I need to set its corners
         if (block.getRightTop().getX() == -1) {
             log.debug("Setting init corners");
@@ -135,7 +144,7 @@ public class BoardRunner {
 
             if (board.getColor(newCoordinate) == block.getColor()) {
                 block.setCorner(newCoordinate);
-                count += findSizeCodel(board, block, newCoordinate);
+                count += findSizeCodel(block, newCoordinate);
             }
         }
 
@@ -149,7 +158,7 @@ public class BoardRunner {
      * @param block the current block
      * @return the next Codel to be part of the execution
      */
-    public static Codel getNextCodel(Block block) throws PietExecutionException {
+    public Codel getNextCodel(Block block) throws PietExecutionException {
 
         DP dp = director.getDP();
         CC cc = director.getCC();
@@ -223,7 +232,7 @@ public class BoardRunner {
     }
 
     // we're getting the newest codel, from the old one, c
-    public static Codel getNextCodel(Board board, Block block, int attempt) throws PietExecutionException {
+    public Codel getNextCodel(Block block, int attempt) throws PietExecutionException {
 
         // We are not able to find another valid Codel in any of the current
         // blocks Codels.
@@ -237,7 +246,7 @@ public class BoardRunner {
         if(!board.isInBounds(next) || board.getColor(next).equals(PietColor.BLACK)) {
             director.rotateByAttempt(attempt);
 
-            return getNextCodel(board, block, attempt + 1);
+            return getNextCodel(block, attempt + 1);
         }
 
         return next;
@@ -273,7 +282,7 @@ public class BoardRunner {
      *                      white space
      * @return the next non-white Codel to start the program at
      */
-    public static Codel getNextCodelWhite(Board board, Codel startCodel, Codel previousColor, int attempt) {
+    public Codel getNextCodelWhite(Codel startCodel, Codel previousColor, int attempt) {
 
         // We are not able to find another valid Codel in any of the current
         // blocks Codels.
@@ -297,7 +306,7 @@ public class BoardRunner {
             if(!board.isInBounds(potentialNext) || board.getColor(potentialNext).equals(PietColor.BLACK)) {
                 director.rotateCC(1);
                 director.rotateDP(1);
-                return getNextCodelWhite(board, currCodel, previousColor, attempt + 1);
+                return getNextCodelWhite(currCodel, previousColor, attempt + 1);
             }
 
             currRow += dp.getX();
@@ -308,5 +317,5 @@ public class BoardRunner {
 
         return currCodel;
     }
-
+    
 }
