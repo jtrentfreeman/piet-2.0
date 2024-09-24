@@ -21,6 +21,7 @@ import com.frejt.piet.director.DP;
 import com.frejt.piet.director.Director;
 import com.frejt.piet.exception.PietCommandNotFoundException;
 import com.frejt.piet.utils.Block;
+import com.frejt.piet.utils.BlockSet;
 import com.frejt.piet.utils.color.PietColor;
 
 import org.mockito.Mock;
@@ -52,7 +53,9 @@ public class CommandControllerTest {
         older = mock(Block.class);
         newer = mock(Block.class);
 
-        runner = new CommandRunner(stack, older, newer);
+        BlockSet blocks = new BlockSet(older, newer);
+
+        runner = new CommandRunner(stack, blocks);
 
     }
 

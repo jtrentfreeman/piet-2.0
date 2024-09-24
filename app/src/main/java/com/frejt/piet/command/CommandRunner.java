@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import com.frejt.piet.controller.Program;
 import com.frejt.piet.exception.PietCommandNotFoundException;
 import com.frejt.piet.utils.Block;
+import com.frejt.piet.utils.BlockSet;
 import com.frejt.piet.utils.color.PietHue;
 import com.frejt.piet.utils.color.PietLight;
 
@@ -24,9 +25,6 @@ public class CommandRunner {
      */
     private Command command;
 
-    /**
-     * The first Block that will
-     */
     private Block older;
 
     private Block newer;
@@ -35,10 +33,10 @@ public class CommandRunner {
 
     private static final Logger log = LogManager.getLogger(CommandRunner.class);
 
-    public CommandRunner(Stack<Integer> stack, Block older, Block newer) {
+    public CommandRunner(Stack<Integer> stack, BlockSet blocks) {
         this.stack = stack;
-        this.older = older;
-        this.newer = newer;
+        this.older = blocks.getFirst();
+        this.newer = blocks.getLast();
     }
 
     public Stack<Integer> run() throws PietCommandNotFoundException {

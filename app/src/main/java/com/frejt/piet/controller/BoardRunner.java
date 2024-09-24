@@ -48,13 +48,12 @@ public class BoardRunner {
 
             // get the coords of the next Codel
             Codel nextCodel = getNextCodel(blocks.getFirst(), 0);
+            Block nextBlock = new Block(board, nextCodel);
+            Integer nextSize = findSizeCodel(nextBlock, nextCodel);
+            nextBlock.setSize(nextSize);
 
-            // initiate the newest Codel
-            blocks.addBlock(new Block(board, nextCodel));
-            int size = findSizeCodel(blocks.getLast(), nextCodel);
+            blocks.addBlock(nextBlock);
             board.setVisitedAll(false);
-
-            blocks.getLast().setSize(size);
 
             // White codels are a special case
             if (blocks.getLast().getColor().equals(PietColor.WHITE)) {
@@ -67,7 +66,7 @@ public class BoardRunner {
             } else {
 
                 try {
-                    CommandRunner runner = new CommandRunner(program.getStack(), blocks.getFirst(), blocks.getLast());
+                    CommandRunner runner = new CommandRunner(program.getStack(), blocks);
                     runner.run();
                 } catch (PietCommandNotFoundException e) {
                     log.error("Ran into an error during execution: " + e.getMessage());
