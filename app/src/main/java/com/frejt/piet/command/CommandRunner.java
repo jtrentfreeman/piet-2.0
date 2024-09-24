@@ -16,7 +16,18 @@ import org.apache.logging.log4j.Logger;
 public class CommandRunner {
     
     /**
-     * The execution stack so far
+     * Piet uses a stack for storage of all data values. 
+     * 
+     * Data values exist only as integers, though they may be read in 
+     * or printed as Unicode character values with appropriate commands.
+     * 
+     * The stack is notionally infinitely deep, but implementations may 
+     * elect to provide a finite maximum stack size. 
+     * 
+     * If a finite stack overflows, it should be treated as a runtime 
+     * error, and handling this will be implementation dependent.
+     * 
+     * TODO? Make this its own class
      */
     private Stack<Integer> stack;
 
