@@ -47,6 +47,7 @@ public class BoardRunner {
             blocks.rotateBlocks();
 
             // get the coords of the next Codel
+            // TODO: probably make this it's own func
             Codel nextCodel = getNextCodel(blocks.getFirst(), 0);
             Block nextBlock = new Block(board, nextCodel);
             Integer nextSize = findSizeCodel(nextBlock, nextCodel);
@@ -57,9 +58,12 @@ public class BoardRunner {
 
             // White codels are a special case
             if (blocks.getLast().getColor().equals(PietColor.WHITE)) {
-                Codel nextNonWhite = getNextCodelWhite(nextCodel, blocks.getFirst().getRightTop(), 0);
-                blocks.set(0, new Block(board, nextNonWhite));
-                blocks.getFirst().setSize(findSizeCodel(blocks.getFirst(), nextNonWhite));
+                Codel nextNonWhiteCodel = getNextCodelWhite(nextCodel, blocks.getFirst().getRightTop(), 0);
+                Block nextNonWhiteBlock = new Block(board, nextNonWhiteCodel);
+                Integer nextNonWhiteSize = findSizeCodel(nextNonWhiteBlock, nextNonWhiteCodel);
+                nextNonWhiteBlock.setSize(nextNonWhiteSize);
+
+                blocks.set(0, nextNonWhiteBlock);
                 blocks.remove(1);
 
                 board.setVisitedAll(false);
@@ -109,6 +113,7 @@ public class BoardRunner {
 
     /**
      * Finds the size of a Block of Codels.
+     * TODO: probably move this into the {@link Block} class
      * 
      * @param board the Board being used during the traversal of the program
      * @param block the Block the size is being found for
@@ -118,8 +123,6 @@ public class BoardRunner {
     public Integer findSizeCodel(Block block, Codel coord) {
         // codel is uninitiated, so I need to set its corners
         if (block.getRightTop().getX() == -1) {
-            log.debug("Setting init corners");
-            // setCorners(block, coord);
             block.setCorner(coord);
         }
 
