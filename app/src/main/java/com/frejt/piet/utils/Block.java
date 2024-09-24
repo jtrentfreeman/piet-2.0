@@ -132,8 +132,12 @@ public class Block {
 		return "[x: " + topRight.getX() + ", y: " + topRight.getY() + "]";
     }
 
-	// Piet relies entirely on moving from a corner to a new color, need to set two
-    // corners (l, r) for each direction (l, r, u, d)
+    /**
+     * For each {@link DP} direction, determines whether the given {@link Codel}
+     * is in the furthest direction for each {@link CC}
+     * 
+     * @param coordinate the Codel being checked for the current Block
+     */
     public void setCorner(Codel coordinate) {
 
         // potential for new right column value
@@ -171,7 +175,6 @@ public class Block {
                 setBottomLeft(coordinate);
             }
             // if further left
-            // TODO: investigate why this has three conditions
             if (coordinate.getY() < getBottomLeft().getY() || getBottomLeft().getY() == -1) {
                 setBottomLeft(coordinate);
             }

@@ -43,9 +43,9 @@ public class CommandRunner {
 
     public Stack<Integer> run() throws PietCommandNotFoundException {
 
-            this.command = findCommand();
+        this.command = findCommand();
 
-            return runCommand();
+        return runCommand();
 
     }
 

@@ -234,7 +234,6 @@ public class CommandController {
             return stack;
         }
 
-
         Integer top = stack.pop();
         Integer bottom = stack.pop();
 

@@ -31,7 +31,7 @@ public class BoardRunner {
         this.board = board;
     }
 
-/**
+    /**
      * Given a {@link Board}, move through the board in order and perform the
      * commands.
      *
@@ -231,7 +231,15 @@ public class BoardRunner {
         return next;
     }
 
-    // we're getting the newest codel, from the old one, c
+    /**
+     * Searches for the next {@link Codel}, from the old one
+     * 
+     * @param block     the current block being searched from
+     * @param attempt   how many attempts have been made to find the next Codel
+     * @return the next Codel the program will be ran from
+     * 
+     * @throws PietExecutionException
+     */
     public Codel getNextCodel(Block block, int attempt) throws PietExecutionException {
 
         // We are not able to find another valid Codel in any of the current
