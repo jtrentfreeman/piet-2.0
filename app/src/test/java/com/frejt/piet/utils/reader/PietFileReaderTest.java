@@ -18,6 +18,12 @@ import com.frejt.piet.utils.color.PietColor;
 
 class PietFileReaderTest {
 
+    private static final Path JPG_TEST_FILE = Paths.get(System.getProperty("user.dir"), "src\\test\\resources\\com\\frejt\\piet\\Test.jpg");
+
+    private static final Path PNG_TEST_FILE = Paths.get(System.getProperty("user.dir"), "src\\test\\resources\\com\\frejt\\piet\\Test.png");
+
+    private static final Path PPM_TEST_FILE = Paths.get(System.getProperty("user.dir"), "src\\test\\resources\\com\\frejt\\piet\\Test.ppm");
+
     static Board expected;
 
     @BeforeAll
@@ -92,15 +98,6 @@ class PietFileReaderTest {
         Codel blackCodel_2 = new Codel(3, 5);
         expected.setColor(blackCodel_2, PietColor.BLACK);
     }
-
-    Path JPG_TEST_FILE = Paths.get("C:\\Users\\frejt\\code\\n" + //
-                "ewestPiet\\app\\src\\test\\resources\\com\\frejt\\piet\\Test.jpg");
-
-    Path PNG_TEST_FILE = Paths.get("C:\\Users\\frejt\\code\\n" + //
-                "ewestPiet\\app\\src\\test\\resources\\com\\frejt\\piet\\Test.png");
-
-    Path PPM_TEST_FILE = Paths.get("C:\\Users\\frejt\\code\\n" + //
-                "ewestPiet\\app\\src\\test\\resources\\com\\frejt\\piet\\Test.ppm");
     
     /**
      * Asserts taht, when an unsupported file type is passed into the 

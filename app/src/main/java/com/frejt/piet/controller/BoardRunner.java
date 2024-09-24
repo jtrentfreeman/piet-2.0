@@ -156,7 +156,6 @@ public class BoardRunner {
 
         Codel currEdge;
 
-
         switch (dp) {
 
             case RIGHT:
@@ -216,7 +215,9 @@ public class BoardRunner {
 
         }
 
-        Codel next = new Codel(currEdge.getX() + dp.getX(), currEdge.getY() + dp.getY());
+        int nextRow = currEdge.getX() + dp.getX();
+        int nextCol = currEdge.getY() + dp.getY();
+        Codel next = new Codel(nextRow, nextCol);
 
         return next;
     }
@@ -265,14 +266,14 @@ public class BoardRunner {
      * interpreter emerges from non-white coloured blocks.
      * 
      * @param board         the board being traversed
-     * @param coordinate    the Codel to start traversal from
+     * @param startCodel    the Codel to start traversal from
      * @param previousColor the most recent non-white/non-block Codel to have been
      *                      ran
      * @param attempt       how many attempts have been made to escape the current
      *                      white space
      * @return the next non-white Codel to start the program at
      */
-    public static Codel getNextCodelWhite(Board board, Codel coordinate, Codel previousColor, int attempt) {
+    public static Codel getNextCodelWhite(Board board, Codel startCodel, Codel previousColor, int attempt) {
 
         // We are not able to find another valid Codel in any of the current
         // blocks Codels.
@@ -282,14 +283,13 @@ public class BoardRunner {
 
         DP dp = director.getDP();
 
-        int nextRow = coordinate.getX();
-        int nextCol = coordinate.getY();
-        Codel next = new Codel(nextRow, nextCol);
-        Codel potentialNext = new Codel(nextRow + dp.getX(), nextCol + dp.getY());
+        int currRow = startCodel.getX();
+        int currCol = startCodel.getY();
+        Codel currCodel = new Codel(startCodel);
 
         // The interpreter "slides" across the white block in a straight line
-        while(board.getColor(next).equals(PietColor.WHITE)) {
-            potentialNext = new Codel(nextRow + dp.getX(), nextCol + dp.getY());
+        while(board.getColor(currCodel).equals(PietColor.WHITE)) {
+            Codel potentialNext = new Codel(currRow + dp.getX(), currCol + dp.getY());
 
             // If it hits a restriction, the CC is toggled. Since this results in no
             // difference in where the interpreter is trying to go, the DP is immediately
@@ -297,16 +297,16 @@ public class BoardRunner {
             if(!board.isInBounds(potentialNext) || board.getColor(potentialNext).equals(PietColor.BLACK)) {
                 director.rotateCC(1);
                 director.rotateDP(1);
-                return getNextCodelWhite(board, next, previousColor, attempt + 1);
+                return getNextCodelWhite(board, currCodel, previousColor, attempt + 1);
             }
 
-            nextRow += dp.getX();
-            nextCol += dp.getY();
-            next = potentialNext;
+            currRow += dp.getX();
+            currCol += dp.getY();
+            currCodel = potentialNext;
 
         }
 
-        return next;
+        return currCodel;
     }
 
 }

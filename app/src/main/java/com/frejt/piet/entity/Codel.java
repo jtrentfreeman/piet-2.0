@@ -1,5 +1,15 @@
 package com.frejt.piet.entity;
 
+/**
+ * Piet code takes the form of graphics made up of the recognised colours. 
+ * 
+ * Individual pixels of colour are significant in the language, so it is common 
+ * for programs to be enlarged for viewing so that the details are easily visible. 
+ * 
+ * In such enlarged programs, the term "codel" is used to mean a block of colour 
+ * equivalent to a single pixel of code, to avoid confusion with the actual pixels 
+ * of the enlarged graphic, of which many may make up one codel.
+ */
 public class Codel {
     
     private Integer x;
@@ -44,7 +54,5 @@ public class Codel {
             return false;
         return true;
     }
-
-    
 
 }
