@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
+import java.util.UUID;
 
 import com.frejt.piet.controller.Program;
+import com.frejt.piet.controller.Programmer;
 import com.frejt.piet.utils.Block;
 
 /**
@@ -22,8 +24,6 @@ import com.frejt.piet.utils.Block;
  */
 public class CommandController {
 
-    private static Program program = Program.getInstance();
-    
     /**
      * Does nothing and returns the stack.
      * 
@@ -32,8 +32,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> nop(Stack<Integer> stack, Block older, Block newer) {
-        return stack;
+    public static Stack<Integer> nop(UUID uuid, Block older, Block newer) {
+
+        Program program = Programmer.getProgram(uuid);
+        return program.getStack();
+
     }
 
     /**
@@ -46,7 +49,10 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> push(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> push(UUID uuid, Block older, Block newer) {
+
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
         
         Integer in = older.getSize();
 
@@ -63,7 +69,10 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> pop(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> pop(UUID uuid, Block older, Block newer) {
+
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
 
         if(stack.size() == 0) {
             return stack;
@@ -82,8 +91,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> add(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> add(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+       
         if(stack.size() < 2) {
             return stack;
         }
@@ -104,8 +116,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> subtract(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> subtract(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() < 2) {
             return stack;
         }
@@ -126,8 +141,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> multiply(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> multiply(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() < 2) {
             return stack;
         }
@@ -151,8 +169,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> divide(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> divide(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() < 2 || stack.peek() == 0) {
             return stack;
         }
@@ -178,8 +199,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> modulus(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> modulus(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() < 2 || stack.peek() == 0) {
             return stack;
         }
@@ -202,8 +226,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> not(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> not(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() == 0) {
             return stack;
         }
@@ -228,8 +255,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> greater(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> greater(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() < 2) {
             return stack;
         }
@@ -255,14 +285,17 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> dp(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> dp(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() == 0) {
             return stack;
         }
 
         Integer top = stack.pop();
-        Program.getInstance().getDirector().rotateDP(top);
+        program.getDirector().rotateDP(top);
 
         return stack;
     }
@@ -276,14 +309,17 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> cc(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> cc(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() == 0) {
             return stack;
         }
 
         Integer top = stack.pop();
-        Program.getInstance().getDirector().rotateCC(top);
+        program.getDirector().rotateCC(top);
 
         return stack;
     }
@@ -296,8 +332,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> duplicate(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> duplicate(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() == 0) {
             return stack;
         }
@@ -328,8 +367,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> roll(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> roll(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() < 2) {
             return stack;
         }
@@ -402,8 +444,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> inNum(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> inNum(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         try(Scanner s = new Scanner(System.in)) {
             Integer in = s.nextInt();
             stack.push(in);    
@@ -426,8 +471,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> inChar(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> inChar(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         try(Scanner s = new Scanner(System.in)) {
             char in = s.next().charAt(0);
             int i = in;
@@ -447,8 +495,11 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> outNum(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> outNum(UUID uuid, Block older, Block newer) {
 
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
+        
         if(stack.size() == 0) {
             return stack;
         }
@@ -468,7 +519,10 @@ public class CommandController {
      * @param newer the last block to be included in the calculation
      * @return the stack after the command has been ran
      */
-    public static Stack<Integer> outChar(Stack<Integer> stack, Block older, Block newer) {
+    public static Stack<Integer> outChar(UUID uuid, Block older, Block newer) {
+        
+        Program program = Programmer.getProgram(uuid);
+        Stack<Integer> stack = program.getStack();
         
         if(stack.size() == 0) {
             return stack;

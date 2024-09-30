@@ -1,5 +1,7 @@
 package com.frejt.piet.controller;
 
+import java.util.UUID;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,11 +26,18 @@ public class BoardRunner {
     
     private Board board;
 
-    public BoardRunner(Board board) {
-        program = Program.getInstance();
-        director = Director.getInstance();
+    // TOOD: move the UUID to the PietProgramRunner, probably
+    private UUID uuid;
+
+    public BoardRunner(Board board, UUID uuid) {
+
+        Programmer.newProgram(uuid);
+
+        program = Programmer.getProgram(uuid);
+        director = Programmer.getProgram(uuid).getDirector();
 
         this.board = board;
+        this.uuid = uuid;
     }
 
     /**
@@ -37,18 +46,17 @@ public class BoardRunner {
      *
      * @param board the Board, holding a grid of {@link Codel}s to be traversed
      */
-    public void runBoard() throws PietExecutionException {
+    public String runBoard() throws PietExecutionException {
 
         BlockSet blocks = prepareForRun();
+        blocks.rotateBlocks();
+        Codel nextCodel = getNextCodel(blocks.getFirst(), 0);
 
         // the program will end on it's own (hypothetically)
         while(!program.getEnd()) {
 
-            blocks.rotateBlocks();
-
             // get the coords of the next Codel
             // TODO: probably make this it's own func
-            Codel nextCodel = getNextCodel(blocks.getFirst(), 0);
             Block nextBlock = new Block(board, nextCodel);
             Integer nextSize = findSizeCodel(nextBlock, nextCodel);
             nextBlock.setSize(nextSize);
@@ -70,7 +78,7 @@ public class BoardRunner {
             } else {
 
                 try {
-                    CommandRunner runner = new CommandRunner(program.getStack(), blocks);
+                    CommandRunner runner = new CommandRunner(uuid, program.getStack(), blocks);
                     runner.run();
                 } catch (PietCommandNotFoundException e) {
                     log.error("Ran into an error during execution: " + e.getMessage());
@@ -80,9 +88,13 @@ public class BoardRunner {
                 // shift the new Codel to the old one's spot
                 blocks.set(0, blocks.getLast());
             }
+
+            blocks.rotateBlocks();
+
+            nextCodel = getNextCodel(blocks.getFirst(), 0);
         }
 
-        program.end();
+        return program.getOutput();
 
     }
 
@@ -244,10 +256,15 @@ public class BoardRunner {
      */
     public Codel getNextCodel(Block block, int attempt) throws PietExecutionException {
 
-        // We are not able to find another valid Codel in any of the current
+        // The system is not able to find another valid Codel in any of the current
         // blocks Codels.
+        // Technically, something "needs" to be returned, so returning an invalid
+        // Codel is good enough for now
+        // If there's a better way to quit a Callable this should be replaced
         if (attempt > 8) {
             program.end();
+            // Thread.currentThread().interrupt();
+            return new Codel(-1, -1);
         }
 
         Codel next = new Codel(getNextCodel(block));

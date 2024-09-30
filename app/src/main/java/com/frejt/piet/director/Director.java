@@ -31,21 +31,15 @@ import com.frejt.piet.command.CommandController;
  * 
  * The interpreter continues doing this until the program terminates.
  * 
- * 
- * This program instantiates the Director as a singleton, so that there is no
- * disjoint between how the program reads the board.
- * 
  * @see DP
  * @see CC
  */
 public class Director {
 
-    private static Director singleDirector = null;
-
     private CC cc;
     private DP dp;
 
-    private Director() {
+    public Director() {
         dp = DP.RIGHT;
         cc = CC.LEFT;
     }
@@ -56,13 +50,6 @@ public class Director {
 
     public DP getDP() {
         return this.dp;
-    }
-
-    public static Director getInstance() {
-        if(singleDirector == null) {
-            singleDirector = new Director();
-        }
-        return singleDirector;
     }
 
     /**

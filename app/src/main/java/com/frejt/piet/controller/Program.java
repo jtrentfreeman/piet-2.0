@@ -19,16 +19,6 @@ public class Program {
     private static final Logger log = LogManager.getLogger(Program.class);
 
     /**
-     * This is a singleton.
-     * I know this is a bad pattern.
-     * It should probably be changed to a Factory or something.
-     * I'll get there.
-     * 
-     * TODO: remove Singleton pattern
-     */
-    private static Program singleProgram = null;
-
-    /**
      * Helps keep track of the commands that have taken place
      */
     private List<Command> commandList;
@@ -42,6 +32,11 @@ public class Program {
      * Whether the program has finished running
      */
     private Boolean end;
+
+    /**
+     * The end result of the program
+     */
+    private String output;
 
     /**
      * The stdout printed by the program;
@@ -61,19 +56,12 @@ public class Program {
      */
     private Stack<Integer> stack;
 
-    private Program() {
+    public Program() {
         commandList = new ArrayList<>();
-        director = Director.getInstance();
+        director = new Director();
         end = false;
         outputBuilder = new StringBuilder();
         stack = new Stack<>();
-    }
-
-    public static Program getInstance() {
-        if(singleProgram == null) {
-            singleProgram = new Program();
-        }
-        return singleProgram;
     }
 
     public List<Command> getCommandList() {
@@ -100,6 +88,10 @@ public class Program {
         this.end = end;
     }
 
+    public String getOutput() {
+        return output;
+    }
+
     public StringBuilder getOutputBuilder() {
         return outputBuilder;
     }
@@ -111,8 +103,10 @@ public class Program {
     public void end() {
         setEnd(true);
         log.debug("Done");
-        log.info(getOutputBuilder().toString());
-        System.exit(0);
+        this.output = outputBuilder.toString();
+        // log.info(output);
+        // System.exit(0);
+        
     }
 
 

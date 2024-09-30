@@ -1,10 +1,12 @@
 package com.frejt.piet.command;
 
 import java.util.Stack;
+import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 
 import com.frejt.piet.controller.Program;
+import com.frejt.piet.controller.Programmer;
 import com.frejt.piet.exception.PietCommandNotFoundException;
 import com.frejt.piet.utils.Block;
 import com.frejt.piet.utils.BlockSet;
@@ -14,22 +16,10 @@ import com.frejt.piet.utils.color.PietLight;
 import org.apache.logging.log4j.Logger;
 
 public class CommandRunner {
-    
-    /**
-     * Piet uses a stack for storage of all data values. 
-     * 
-     * Data values exist only as integers, though they may be read in 
-     * or printed as Unicode character values with appropriate commands.
-     * 
-     * The stack is notionally infinitely deep, but implementations may 
-     * elect to provide a finite maximum stack size. 
-     * 
-     * If a finite stack overflows, it should be treated as a runtime 
-     * error, and handling this will be implementation dependent.
-     * 
-     * TODO? Make this its own class
-     */
-    private Stack<Integer> stack;
+
+    private Program program;
+
+    private static final Logger log = LogManager.getLogger(CommandRunner.class);
 
     /**
      * The command that will be ran
@@ -40,21 +30,22 @@ public class CommandRunner {
 
     private Block newer;
 
-    private static Program program = Program.getInstance();
+    private UUID uuid;
 
-    private static final Logger log = LogManager.getLogger(CommandRunner.class);
+    public CommandRunner(UUID uuid, Stack<Integer> stack, BlockSet blocks) {
+        this.program = Programmer.getProgram(uuid);
 
-    public CommandRunner(Stack<Integer> stack, BlockSet blocks) {
-        this.stack = stack;
         this.older = blocks.getFirst();
         this.newer = blocks.getLast();
+
+        this.uuid = uuid;
     }
 
-    public Stack<Integer> run() throws PietCommandNotFoundException {
+    public void run() throws PietCommandNotFoundException {
 
         this.command = findCommand();
 
-        return runCommand();
+        runCommand();
 
     }
 
@@ -92,15 +83,16 @@ public class CommandRunner {
      * 
      * @return the program's stack after the command has been ran
      */
-    public Stack<Integer> runCommand() {
+    public void runCommand() {
 
         program.addToCommandList(command);
-        stack = command.calculate(stack, older, newer);
+        command.calculate(uuid, older, newer);
+
+        Stack<Integer> stack = program.getStack();
+        
         log.debug("{} \t {}. {} \t\t {}", String.format("%14s", newer.getCoords()),
                 String.format("%3s", program.getCommandList().size()), String.format("%10s", command.toString()),
                 stack.toString());
-
-        return stack;
 
     }
 

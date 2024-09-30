@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import com.frejt.piet.controller.Programmer;
 import com.frejt.piet.director.Director;
 import com.frejt.piet.exception.PietCommandNotFoundException;
 import com.frejt.piet.utils.Block;
@@ -56,18 +58,12 @@ public class CommandRunnerTest {
 
         BlockSet blocks = new BlockSet(older, newer);
 
-        runner = new CommandRunner(stack, blocks);
+        UUID uuid = UUID.randomUUID();
+        Programmer.newProgram(uuid);
+
+        runner = new CommandRunner(uuid, stack, blocks);
 
     }
-
-    @AfterEach
-    void clean() {
-
-        Stack<Integer> stack = new Stack<>();
-        Whitebox.setInternalState(runner, "stack", stack);
-
-    }
-
     
     /**
      * Asserts that, when given two Blocks which have no difference in color,
@@ -269,6 +265,25 @@ public class CommandRunnerTest {
 
     /**
      * Asserts that, when two Blocks, which have colors that are different by two hues
+     * and one light step, that the {@link findCommand} function returns 
+     * {@link Command#SWITCH}.
+     */
+    @Test
+    void findCommand_ThreeHueStep_TwoLightStep_ReturnsSwitch() throws PietCommandNotFoundException {
+
+        when(older.getColor()).thenReturn(PietColor.LIGHT_RED);
+        when(newer.getColor()).thenReturn(PietColor.DARK_CYAN);
+
+        Command expected = Command.SWITCH;
+
+        Command actual = runner.findCommand();
+
+        assertEquals(expected, actual);
+
+    }
+
+    /**
+     * Asserts that, when two Blocks, which have colors that are different by two hues
      * and one light step, that the {@link findCommand} function returns {@link Command#DUP}.
      */
     @Test
@@ -332,6 +347,25 @@ public class CommandRunnerTest {
         when(newer.getColor()).thenReturn(PietColor.LIGHT_MAGENTA);
 
         Command expected = Command.IN_CHAR;
+
+        Command actual = runner.findCommand();
+
+        assertEquals(expected, actual);
+
+    }
+
+    /**
+     * Asserts that, when two Blocks, which have colors that are different by two hues
+     * and one light step, that the {@link findCommand} function returns
+     * {@link Command#OUT_NUM}.
+     */
+    @Test
+    void findCommand_FiveHueStep_OneLightStep_ReturnsOutNumber() throws PietCommandNotFoundException {
+
+        when(older.getColor()).thenReturn(PietColor.LIGHT_RED);
+        when(newer.getColor()).thenReturn(PietColor.MAGENTA);
+
+        Command expected = Command.OUT_NUM;
 
         Command actual = runner.findCommand();
 

@@ -23,7 +23,7 @@
             "mainClass": "com.frejt.piet.controller.Interpreter",
             "projectName": "app",
             "args": [
-                "C:\\Users\\frejt\\code\\newestPiet\\app\\examples\\ppm\\fancyhello.ppm"
+                "C:\\Users\\frejt\\code\\piet-2\\app\\examples\\ppm\\loop.ppm"
             ]
         },
         {
@@ -33,7 +33,7 @@
             "mainClass": "com.frejt.piet.controller.Interpreter",
             "projectName": "app",
             "args": [
-                "C:\\Users\\frejt\\code\\newestPiet\\app\\examples\\png\\Piet_hello.png"
+                "C:\\Users\\frejt\\code\\piet-2\\app\\examples\\png\\Piet_hello.png"
             ]
         }
     ]

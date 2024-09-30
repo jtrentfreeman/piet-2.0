@@ -7,22 +7,19 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
+import java.util.UUID;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.frejt.piet.controller.Program;
+import com.frejt.piet.controller.Programmer;
 import com.frejt.piet.director.CC;
 import com.frejt.piet.director.DP;
 import com.frejt.piet.director.Director;
-import com.frejt.piet.exception.PietCommandNotFoundException;
 import com.frejt.piet.utils.Block;
 import com.frejt.piet.utils.BlockSet;
-import com.frejt.piet.utils.color.PietColor;
 
 import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
@@ -33,9 +30,6 @@ public class CommandControllerTest {
     private static Stack<Integer> stack;
 
     @Mock
-    private static List<Command> commandList;
-
-    @Mock
     private static CommandRunner runner;
 
     @Mock
@@ -44,26 +38,28 @@ public class CommandControllerTest {
     @Mock
     private static Block newer;
 
-    @BeforeAll
-    static void init() {
+    @Mock
+    private static Program program;
+
+    private UUID uuid;
+
+    @BeforeEach
+    void init() {
 
         stack = new Stack<>();
-        commandList = new ArrayList<>();
 
         older = mock(Block.class);
         newer = mock(Block.class);
 
         BlockSet blocks = new BlockSet(older, newer);
 
-        runner = new CommandRunner(stack, blocks);
+        uuid = UUID.randomUUID();
+        Programmer.newProgram(uuid);
 
-    }
+        program = mock(Program.class);
+        when(program.getStack()).thenReturn(stack);
 
-    @AfterEach
-    void clean() {
-
-        Stack<Integer> stack = new Stack<>();
-        Whitebox.setInternalState(runner, "stack", stack);
+        runner = new CommandRunner(uuid, stack, blocks);
 
     }
 
@@ -77,12 +73,12 @@ public class CommandControllerTest {
         Stack<Integer> stack = new Stack<>();
 
         Whitebox.setInternalState(runner, "command", Command.NOP);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         @SuppressWarnings("unchecked")
         Stack<Integer> expected = (Stack<Integer>) stack.clone();
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -102,7 +98,8 @@ public class CommandControllerTest {
         Stack<Integer> expected = new Stack<>();
         expected.add(5);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -115,17 +112,20 @@ public class CommandControllerTest {
     @Test
     void runCommand_Pop_PopsTopValue() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(1);
         stack.add(2);
 
         Whitebox.setInternalState(runner, "command", Command.POP);
-        Whitebox.setInternalState(runner, "stack", stack);
+        Whitebox.setInternalState(runner, "uuid", uuid);
+
+        when(program.getStack()).thenReturn(stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -138,14 +138,12 @@ public class CommandControllerTest {
     @Test
     void runCommand_Pop_EmptyStack_DoesNothing() {
 
-        Stack<Integer> stack = new Stack<>();
-
         Whitebox.setInternalState(runner, "command", Command.POP);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -159,16 +157,16 @@ public class CommandControllerTest {
     @Test
     void runCommand_Add_StackHasOnlyOneValue_DoesNothing() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(1);
 
         Whitebox.setInternalState(runner, "command", Command.ADD);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -182,17 +180,17 @@ public class CommandControllerTest {
     @Test
     void runCommand_Add_AddsTwoValues() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(1);
         stack.add(2);
 
         Whitebox.setInternalState(runner, "command", Command.ADD);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(3);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -206,16 +204,16 @@ public class CommandControllerTest {
     @Test
     void runCommand_Subtract_StackOnlyHasOneValue_DoesNothing() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(1);
 
         Whitebox.setInternalState(runner, "command", Command.SUB);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -229,17 +227,17 @@ public class CommandControllerTest {
     @Test
     void runCommand_Subtract_SubtractsValue() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(1);
         stack.add(2);
 
         Whitebox.setInternalState(runner, "command", Command.SUB);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(-1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -253,16 +251,16 @@ public class CommandControllerTest {
     @Test
     void runCommand_Multiply_StackOnlyHasOneValue_DoesNothing() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(1);
 
         Whitebox.setInternalState(runner, "command", Command.MULT);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -277,17 +275,17 @@ public class CommandControllerTest {
     @Test
     void runCommand_Multiply_MultipliesValue() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(2);
         stack.add(2);
 
         Whitebox.setInternalState(runner, "command", Command.MULT);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(4);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -301,16 +299,16 @@ public class CommandControllerTest {
     @Test
     void runCommand_Divide_StackOnlyHasOneValue_DoesNothing() {
         
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(1);
 
         Whitebox.setInternalState(runner, "command", Command.DIV);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -324,17 +322,17 @@ public class CommandControllerTest {
     @Test
     void runCommand_Divide_DividesValues() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(4);
         stack.add(2);
 
         Whitebox.setInternalState(runner, "command", Command.DIV);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(2);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -348,16 +346,16 @@ public class CommandControllerTest {
     @Test
     void runCommand_Modulus_StackOnlyHasOneValue_DoesNothing() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(1);
 
         Whitebox.setInternalState(runner, "command", Command.MOD);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -371,17 +369,17 @@ public class CommandControllerTest {
     @Test
     void runCommand_Modulus_ModsValues() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(7);
         stack.add(3);
 
         Whitebox.setInternalState(runner, "command", Command.MOD);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -395,14 +393,12 @@ public class CommandControllerTest {
     @Test
     void runCommand_Not_StackIsEmpty_DoesNothing() {
 
-        Stack<Integer> stack = new Stack<>();
-
         Whitebox.setInternalState(runner, "command", Command.NOT);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -415,16 +411,16 @@ public class CommandControllerTest {
     @Test
     void runCommand_Not_ZeroValue_ReplacesWithOne() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(0);
 
         Whitebox.setInternalState(runner, "command", Command.NOT);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -437,16 +433,16 @@ public class CommandControllerTest {
     @Test
     void runCommand_Not_NonZeroValue_ReplacesWithOne() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(5);
 
         Whitebox.setInternalState(runner, "command", Command.NOT);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(0);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -460,16 +456,16 @@ public class CommandControllerTest {
     @Test
     void runCommand_Greater_StackOnlyHasOneValue_DoesNothing() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(5);
 
         Whitebox.setInternalState(runner, "command", Command.GREATER);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(5);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
         
@@ -483,17 +479,17 @@ public class CommandControllerTest {
     @Test
     void runCommand_Greater_OlderIsGreater_OneIsPushed() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(10);
         stack.add(5);
 
         Whitebox.setInternalState(runner, "command", Command.GREATER);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -507,17 +503,17 @@ public class CommandControllerTest {
     @Test
     void runCommand_Greater_NewerIsGreater_OneIsPushed() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(5);
         stack.add(10);
 
         Whitebox.setInternalState(runner, "command", Command.GREATER);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(0);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -531,17 +527,19 @@ public class CommandControllerTest {
     @Test
     void runCommand_Pointer_PositiveInteger_RotatesClockwise() {
 
-        Director director = Director.getInstance();
+        Program program = Programmer.getProgram(uuid);
 
-        Stack<Integer> stack = new Stack<>();
+        Director director = program.getDirector();
+
+        Stack<Integer> stack = program.getStack();
         stack.add(3);
 
         Whitebox.setInternalState(runner, "command", Command.POINTER);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
         assertEquals(director.getDP(), DP.UP);
@@ -552,29 +550,29 @@ public class CommandControllerTest {
      * Asserts that, when the runner has the {@link Command#POINTER} command,
      * and the stack has the top value popped off, if the value is negative, the
      * DP is rotated that many times anticlockwise.
-     * 
-     * TODO: when we move away from the Singleton Director instance, we can have
-     * more than one of these tests at once.
      */
-    // @Test
-    // void runCommand_Pointer_NegativeInteger_RotatesAnticlockwise() {
+    @Test
+    void runCommand_Pointer_NegativeInteger_RotatesAnticlockwise() {
 
-    //     Director director = Director.getInstance();
+        Program program = Programmer.getProgram(uuid);
 
-    //     Stack<Integer> stack = new Stack<>();
-    //     stack.add(-3);
+        Director director = program.getDirector();
 
-    //     Whitebox.setInternalState(runner, "command", Command.POINTER);
-    //     Whitebox.setInternalState(runner, "stack", stack);
+        Stack<Integer> stack = program.getStack();
+        stack.add(-3);
 
-    //     Stack<Integer> expected = new Stack<>();
+        Whitebox.setInternalState(runner, "command", Command.POINTER);
 
-    //     Stack<Integer> actual = runner.runCommand();
+        Stack<Integer> expected = new Stack<>();
 
-    //     assertEquals(expected, actual);
-    //     assertEquals(director.getDP(), DP.DOWN);
+        runner.runCommand();
 
-    // }
+        Stack<Integer> actual = program.getStack();
+
+        assertEquals(expected, actual);
+        assertEquals(director.getDP(), DP.DOWN);
+
+    }
 
     /**
      * Asserts that, when the runner has the {@link Command#SWITCH} command,
@@ -584,17 +582,19 @@ public class CommandControllerTest {
     @Test
     void runCommand_Switch_PositiveInteger_TogglesThatManyTimes() {
 
-        Director director = Director.getInstance();
+        Program program = Programmer.getProgram(uuid);
 
-        Stack<Integer> stack = new Stack<>();
+        Director director = program.getDirector();
+
+        Stack<Integer> stack = program.getStack();
         stack.add(1);
 
         Whitebox.setInternalState(runner, "command", Command.SWITCH);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
         assertEquals(director.getCC(), CC.RIGHT);
@@ -602,46 +602,29 @@ public class CommandControllerTest {
     }
 
     /**
-     * Asserts that, when the runner has the {@link Command#POINTER} command,
+     * Asserts that, when the runner has the {@link Command#SWITCH} command,
      * and the stack has the top value popped off, if the value is negative, the
-     * DP is rotated that many times anticlockwise.
-     */
-    // @Test
-    // void runCommand_Switch_NegativeInteger_RotatesAnticlockwise() {
-
-    //     Director director = Director.getInstance();
-
-    //     Stack<Integer> stack = new Stack<>();
-    //     stack.add(-2);
-
-    //     Whitebox.setInternalState(runner, "command", Command.SWITCH);
-    //     Whitebox.setInternalState(runner, "stack", stack);
-
-    //     Stack<Integer> expected = new Stack<>();
-
-    //     Stack<Integer> actual = runner.runCommand();
-
-    //     assertEquals(expected, actual);
-    //     assertEquals(director.getCC(), CC.LEFT);
-
-    // }
-
-    /**
-     * Asserts that, when two Blocks, which have colors that are different by two hues
-     * and one light step, that the {@link findCommand} function returns 
-     * {@link Command#SWITCH}.
+     * CC is toggled the absolute value of that many times.
      */
     @Test
-    void findCommand_ThreeHueStep_TwoLightStep_ReturnsSwitch() throws PietCommandNotFoundException {
+    void runCommand_Switch_NegativeInteger_RotatesAnticlockwise() {
 
-        when(older.getColor()).thenReturn(PietColor.LIGHT_RED);
-        when(newer.getColor()).thenReturn(PietColor.DARK_CYAN);
+        Program program = Programmer.getProgram(uuid);
 
-        Command expected = Command.SWITCH;
+        Director director = program.getDirector();
 
-        Command actual = runner.findCommand();
+        Stack<Integer> stack = new Stack<>();
+        stack.add(-2);
+
+        Whitebox.setInternalState(runner, "command", Command.SWITCH);
+
+        Stack<Integer> expected = new Stack<>();
+
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
+        assertEquals(director.getCC(), CC.LEFT);
 
     }
 
@@ -653,14 +636,12 @@ public class CommandControllerTest {
     @Test
     void runCommand_Duplicate_StackIsEmpty_DoesNothing() {
 
-        Stack<Integer> stack = new Stack<>();
-
         Whitebox.setInternalState(runner, "command", Command.DUP);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -674,17 +655,17 @@ public class CommandControllerTest {
     @Test
     void runCommand_duplicate_ValueDuplicated() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.add(5);
 
         Whitebox.setInternalState(runner, "command", Command.DUP);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(5);
         expected.add(5);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -698,16 +679,16 @@ public class CommandControllerTest {
     @Test
     void runCommand_Roll_StackOnlyHasOneValue_DoesNothing() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.push(1);
 
         Whitebox.setInternalState(runner, "command", Command.ROLL);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.push(1);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -722,7 +703,7 @@ public class CommandControllerTest {
     @Test
     void runCommand_Roll_ChangesOrder() {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> stack = Programmer.getProgram(uuid).getStack();
         stack.push(1);
         stack.push(2);
         stack.push(3);
@@ -730,14 +711,14 @@ public class CommandControllerTest {
         stack.push(1);
 
         Whitebox.setInternalState(runner, "command", Command.ROLL);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.push(3);
         expected.push(1);
         expected.push(2);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -756,16 +737,13 @@ public class CommandControllerTest {
         InputStream in = new ByteArrayInputStream(SIXTY_FIVE.getBytes());
         System.setIn(in);
         
-
-        Stack<Integer> stack = new Stack<>();
-
         Whitebox.setInternalState(runner, "command", Command.IN_NUM);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(65);
 
-        Stack<Integer> actual = runner.runCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 
@@ -783,34 +761,13 @@ public class CommandControllerTest {
         InputStream in = new ByteArrayInputStream(A.getBytes());
         System.setIn(in);
 
-        Stack<Integer> stack = new Stack<>();
-
         Whitebox.setInternalState(runner, "command", Command.IN_CHAR);
-        Whitebox.setInternalState(runner, "stack", stack);
 
         Stack<Integer> expected = new Stack<>();
         expected.add(65);
 
-        Stack<Integer> actual = runner.runCommand();
-
-        assertEquals(expected, actual);
-
-    }
-
-    /**
-     * Asserts that, when two Blocks, which have colors that are different by two hues
-     * and one light step, that the {@link findCommand} function returns
-     * {@link Command#OUT_NUM}.
-     */
-    @Test
-    void findCommand_FiveHueStep_OneLightStep_ReturnsOutNumber() throws PietCommandNotFoundException {
-
-        when(older.getColor()).thenReturn(PietColor.LIGHT_RED);
-        when(newer.getColor()).thenReturn(PietColor.MAGENTA);
-
-        Command expected = Command.OUT_NUM;
-
-        Command actual = runner.findCommand();
+        runner.runCommand();
+        Stack<Integer> actual = Programmer.getProgram(uuid).getStack();
 
         assertEquals(expected, actual);
 

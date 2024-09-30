@@ -4,10 +4,22 @@
 package com.frejt.piet.controller;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.frejt.azure.eventhubs.PietMessageRequest;
+// import com.frejt.azure.eventhubs.SenderAAD;
+import com.frejt.azure.eventhubs.ServiceBus;
+import com.frejt.azure.storage.BlobStorage;
 import com.frejt.piet.entity.Board;
 import com.frejt.piet.exception.PietExecutionException;
 import com.frejt.piet.utils.reader.PietFileReader;
@@ -23,19 +35,42 @@ public class Interpreter {
      */
     public static void main(String[] args) {
 
-        Path runFile = InterpreterUtils.getRunFile(args);
-        log.debug("Running file " + runFile.toString());
+        ExecutorService service = Executors.newFixedThreadPool(5);
 
-        PietFileReader fileReader = new PietFileReader(runFile);
+        List<Future<String>> output = new ArrayList<>();
+
+        List<String> input = Arrays.asList(
+            "C:\\Users\\frejt\\code\\piet-2\\app\\examples\\ppm\\frejt-1.ppm",
+            "C:\\Users\\frejt\\code\\piet-2\\app\\examples\\ppm\\hi.ppm",
+            "C:\\Users\\frejt\\code\\piet-2\\app\\examples\\ppm\\nfib.ppm",
+            "C:\\Users\\frejt\\code\\piet-2\\app\\examples\\png\\Piet_hello.png"
+        );
 
         try {
-            Board board = fileReader.convertFileToBoard();
-            BoardRunner runner = new BoardRunner(board);
-            runner.runBoard();
-            
-        } catch (PietExecutionException e) {
-            log.error("Board was unable to be read: " + e.getMessage());
+            for(int i = 0; i < 4; i++) {
+
+                // PietMessageRequest request = ServiceBus.receiveSingleMessage();
+                // Path runFile = BlobStorage.downloadBlob(request.getMessage());
+                // Path runFile = InterpreterUtils.getRunFile(args);
+
+                Path runFile = Paths.get(input.get(i));
+
+                PietProgramRunner runner = new PietProgramRunner(runFile);
+                output.add(service.submit(runner));
+
+                // TimeUnit.SECONDS.sleep(5);
+        
+            }
+
+            for(Future<String> future: output) {
+                log.info(future.get());
+            }
+
+        } catch(Exception e) {
+            log.error("Ran into an unfixable error: " + e.getMessage());
         }
+
+        System.exit(0);
     }
 }
 
