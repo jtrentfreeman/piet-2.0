@@ -25,6 +25,7 @@ public class PPMMetadata {
      * The maximum color value (Maxval), again in ASCII decimal. 
      * Must be less than 65536 and more than zero.
      */
+    @SuppressWarnings("unused")
     private Integer maxVal;
 
     public PPMMetadata(String magicNumber, Integer column, Integer row, Integer maxVal) {
@@ -56,14 +57,6 @@ public class PPMMetadata {
 
     public void setRow(Integer row) {
         this.row = row;
-    }
-
-    public Integer getMaxVal() {
-        return this.maxVal;
-    }
-
-    public void setMaxVal(Integer maxVal) {
-        this.maxVal = maxVal;
     }
     
 }

@@ -145,9 +145,9 @@ public class BoardRunner {
         // 4 directions the program will search in for more of the same color
         Codel newCoordinate;
 
-        for (int i = 0; i < 4; i++) {
-            int x = DP.values()[i].getX();
-            int y = DP.values()[i].getY();
+        for (DP dp : DP.values()) {
+            int x = dp.getX();
+            int y = dp.getY();
 
             newCoordinate = new Codel(coord.getX() + x, coord.getY() + y);
 
@@ -315,6 +315,7 @@ public class BoardRunner {
         // blocks Codels.
         if (attempt > 8) {
             program.end();
+            return new Codel(-1, -1);
         }
 
         DP dp = director.getDP();

@@ -223,49 +223,58 @@ public class BoardRunnerTest {
     }
 
     /**
-        Asserts that, when a White {@link}
-    
-        _ _ _ _ _ _ _
-        _ _ B B B _ _
-        B _ B _ B _ _
-        _ _ _ _ B _ _
-        _ _ B _ B _ _
-        _ _ B B B _ _
-        _ _ _ _ _ _ _ 
-     
-      
+     * Asserts that, when execution hits a {@link PietColor#WHITE} {@link Codel},
+     * the interpreter slides in the direction of the DP until a non-white color 
+     * block is hit. 
+     * Then, if the interpreter hits a {@link PietColor#BLACK} Codel, or hits an 
+     * edge, the DP and CC are toggled, and execution continues again.
+     * If execution gets into a space from which it cannot find a new colored Codel
+     * to continue from, the program will end.
+     * 
+     * _ _ _ _ _ _ _
+     * _ _ B B B _ _
+     * B _ B _ B _ _
+     * _ _ _ _ B _ _
+     * _ _ B _ B _ _
+     * _ _ B B B _ _
+     * _ _ _ _ _ _ _ 
+     * 
+     * _: White
+     * R: Red
      */
-    // @Test
-    // void getNextCodelWhite_TrapDoor_ProgramEnds() {
+    @Test
+    void getNextCodelWhite_TrapDoor_ProgramEnds() {
 
-    //     Board board = new Board(7, 7);
+        Board board = new Board(7, 7);
 
-    //     for(int i = 0; i < board.getSizeRow(); i++) {
-    //         for(int j = 0; j < board.getSizeCol(); j++) {
-    //             Codel tempCodel = new Codel(i, j);
-    //             board.setColor(tempCodel, PietColor.WHITE);
-    //         }
-    //     }
+        for(int i = 0; i < board.getSizeRow(); i++) {
+            for(int j = 0; j < board.getSizeCol(); j++) {
+                Codel tempCodel = new Codel(i, j);
+                board.setColor(tempCodel, PietColor.WHITE);
+            }
+        }
 
-    //     // building a trap door
-    //     int[][] trapdoors = new int[][] {
-    //                 {1, 2}, {1, 3}, {1, 4},
-    //         {2, 0}, {2, 2},         {2, 4},
-    //                                 {3, 4},
-    //                 {4, 2},         {4, 4},
-    //                 {5, 2}, {5, 3}, {5, 4}
-    //     };
+        // building a trap door which will end the program
+        int[][] trapdoors = new int[][] {
+                    {1, 2}, {1, 3}, {1, 4},
+            {2, 0}, {2, 2},         {2, 4},
+                                    {3, 4},
+                    {4, 2},         {4, 4},
+                    {5, 2}, {5, 3}, {5, 4}
+        };
 
-    //     for(int i = 0; i < trapdoors.length; i++) {
-    //         Codel trapdoor = new Codel(trapdoors[i][0], trapdoors[i][1]);
-    //         board.setColor(trapdoor, PietColor.BLACK);
-    //     }
+        for(int i = 0; i < trapdoors.length; i++) {
+            Codel trapdoor = new Codel(trapdoors[i][0], trapdoors[i][1]);
+            board.setColor(trapdoor, PietColor.BLACK);
+        }
 
-    //     Codel topLeftCodel = new Codel(0, 0);
-    //     Codel huh = BoardRunner.getNextCodelWhite(board, topLeftCodel, topLeftCodel, 0);
+        UUID uuid = UUID.randomUUID();
 
-    //     System.out.println(huh);
-    //     assertEquals(true, Program.getInstance().getEnd());
-    // }
+        Codel topLeftCodel = new Codel(0, 0);
+        BoardRunner runner = new BoardRunner(board, uuid);
+        runner.getNextCodelWhite(topLeftCodel, topLeftCodel, 0);
+
+        assertEquals(true, Programmer.getProgram(uuid).getEnd());
+    }
     
 }

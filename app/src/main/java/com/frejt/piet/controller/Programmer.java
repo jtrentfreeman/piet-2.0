@@ -27,10 +27,6 @@ public class Programmer {
         programs.put(uuid, new Program());
     }
 
-    public static Map<UUID, Program> listPrograms() {
-        return programs;
-    }
-
     public static void removeProgram(UUID uuid) {
         programs.remove(uuid);
     }
