@@ -16,11 +16,12 @@ Here's the things I want to do with this project:
   Read files with comments in them plz
   Better logging
   Better arguments (verbose, max steps)
+  JSON config file
+    Azure resources
+    run mode (single run or service bus)
 
   We need to connect to Azure
-    file share
-      to push/pull piet programs to/from
-    message bus
-      to tell what programs to start
     database 
       to store results
+    security
+      azure identity (somehow)

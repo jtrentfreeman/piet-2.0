@@ -9,11 +9,9 @@ import java.util.List;
 import java.util.Stack;
 import java.util.UUID;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
 
 import com.frejt.piet.controller.Programmer;
 import com.frejt.piet.director.Director;

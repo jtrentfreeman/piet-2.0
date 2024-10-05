@@ -3,26 +3,13 @@
  */
 package com.frejt.piet.controller;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.frejt.azure.eventhubs.PietMessageRequest;
-// import com.frejt.azure.eventhubs.SenderAAD;
 import com.frejt.azure.eventhubs.ServiceBus;
 import com.frejt.azure.storage.BlobStorage;
-import com.frejt.piet.entity.Board;
-import com.frejt.piet.exception.PietExecutionException;
-import com.frejt.piet.utils.reader.PietFileReader;
 
 public class Interpreter {
 
@@ -35,39 +22,30 @@ public class Interpreter {
      */
     public static void main(String[] args) {
 
-        ExecutorService service = Executors.newFixedThreadPool(5);
-
-        List<Future<String>> output = new ArrayList<>();
-
-        List<String> input = Arrays.asList(
-            "C:\\Users\\frejt\\code\\piet-2\\app\\examples\\ppm\\frejt-1.ppm",
-            "C:\\Users\\frejt\\code\\piet-2\\app\\examples\\ppm\\hi.ppm",
-            "C:\\Users\\frejt\\code\\piet-2\\app\\examples\\ppm\\nfib.ppm",
-            "C:\\Users\\frejt\\code\\piet-2\\app\\examples\\png\\Piet_hello.png"
-        );
-
         try {
-            for(int i = 0; i < 4; i++) {
 
-                // PietMessageRequest request = ServiceBus.receiveSingleMessage();
-                // Path runFile = BlobStorage.downloadBlob(request.getMessage());
-                // Path runFile = InterpreterUtils.getRunFile(args);
+            // TODO: this trash crashes the first time we try to
+            // download a blob from Azure
+            // it's real annoying
+            // luckily it works perfectly fine every other time
+            // so we're just going to instantiate a fake first download
+            // so the rest of the program works just fine
+            BlobStorage storage = new BlobStorage();
+            storage.downloadBlob("ppm/hi.ppm");
 
-                Path runFile = Paths.get(input.get(i));
+            ServiceBus bus = new ServiceBus();
 
-                PietProgramRunner runner = new PietProgramRunner(runFile);
-                output.add(service.submit(runner));
+            while(true) {
+                log.info("prompt for receivemessages");
+                bus.receiveMessages();
 
-                // TimeUnit.SECONDS.sleep(5);
-        
-            }
+                log.info("we have " + bus.getFutures().size() + " programs");
 
-            for(Future<String> future: output) {
-                log.info(future.get());
+                TimeUnit.SECONDS.sleep(5);
             }
 
         } catch(Exception e) {
-            log.error("Ran into an unfixable error: " + e.getMessage());
+            log.error("Ran into an unfixable error: ", e.getMessage());
         }
 
         System.exit(0);

@@ -10,9 +10,6 @@ import java.io.FileInputStream;
 
 import javax.imageio.ImageIO;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.frejt.piet.entity.Board;
 import com.frejt.piet.entity.Codel;
 import com.frejt.piet.entity.PPMMetadata;
@@ -25,8 +22,6 @@ import com.frejt.piet.utils.color.PietColor;
  * Class dedicated to reading a Piet file.
  */
 public class PietFileReader {
-
-    private static final Logger log = LogManager.getLogger(PietFileReader.class);
 
     private Path path;
 

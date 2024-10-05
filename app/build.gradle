@@ -4,18 +4,29 @@
 
 
 plugins {
+    id 'java'
+    id 'application'
     id 'com.frejt.java-application-conventions'
+
+    // wth this is it's a miracle
+    // we need this to avoid classpath conflicts when creating .jar file
+    // @see shadowJar task below
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 dependencies {
 
-    implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.1'
     implementation 'org.apache.commons:commons-text'
-    implementation 'org.apache.kafka:kafka-clients:3.3.1'
 
+    implementation 'com.azure:azure-identity:1.9.2'
     implementation 'com.azure:azure-messaging-servicebus:7.13.3'
-    implementation 'com.azure:azure-storage-blob:12.16.0'
+    // implementation 'com.azure:azure-storage-blob:12.23.0'
+    // https://mvnrepository.com/artifact/com.azure/azure-storage-blob
+    implementation 'com.azure:azure-storage-blob:12.28.0'
+
+
 
     implementation project(':utilities')
 
@@ -27,4 +38,13 @@ dependencies {
 application {
     // Define the main class for the application.
     mainClass = 'com.frejt.piet.controller.Interpreter'
+}
+
+shadowJar {
+    archiveBaseName.set('piet')
+    archiveVersion.set('1.0')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
 }
