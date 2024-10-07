@@ -3,10 +3,12 @@ package com.frejt.piet.director;
 import com.frejt.piet.command.CommandController;
 
 /**
- * The Piet language interpreter beings executing a program in the colour block
+ * †The Piet language interpreter beings executing a program in the colour block
  * which includes the upper left codel of the program.
+ * 
  * The Interpreter maintains a Direction Pointer (DP), initially pointing to the
  * right.
+ * 
  * The DP may point either right, left, down, or up.
  * 
  * The interpreter also maintains a Codel Chooser (CC), initially pointing left.

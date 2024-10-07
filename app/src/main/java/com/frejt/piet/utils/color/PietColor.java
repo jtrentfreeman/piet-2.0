@@ -2,6 +2,29 @@ package com.frejt.piet.utils.color;
 
 import com.frejt.piet.exception.PietColorNotFoundException;
 
+/**
+ * †Piet uses 20 distinct colours. 
+ * 
+ * The 18 colours in the first 3 rows of the table are related cyclically 
+ * in the following two ways:
+ * 
+ * Hue Cycle: red -> yellow -> green -> cyan -> blue -> magenta -> red
+ * Lightness Cycle: light -> normal -> dark -> light
+ * 
+ * Note that "light" is considered to be one step "darker" than "dark", 
+ * and vice versa.
+ * 
+ * White and black do not fall into either cycle.
+ * 
+ * Additional colours (such as orange, brown) may be used, 
+ * though their effect is implementation-dependent. 
+ * 
+ * TODO: In the simplest case, non-standard colours are treated by the 
+ * language interpreter as the same as white, so may be used freely 
+ * wherever white is used. 
+ * 
+ * (Another possibility is that they are treated the same as black.)
+ */
 public enum PietColor {
 
     LIGHT_RED(PietLight.LIGHT, PietHue.RED, 0xFF, 0xC0, 0xC0),

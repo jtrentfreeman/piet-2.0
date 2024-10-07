@@ -44,9 +44,11 @@ public class Program {
     private StringBuilder outputBuilder;
 
     /**
-     * Piet uses a stack for storage of all data values. Data values exist only as
-     * integers, though they may be read in or printed as Unicode character values
-     * with appropriate commands.
+     * †Piet uses a stack for storage of all data values. 
+     * 
+     * Data values exist only as integers, though they may be 
+     * read in or printed as Unicode character values with 
+     * appropriate commands.
      * 
      * The stack is nottionally infinitely deep, but implementations may elect to
      * provide a finite maximum stack size.

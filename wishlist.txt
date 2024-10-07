@@ -19,6 +19,8 @@ Here's the things I want to do with this project:
   JSON config file
     Azure resources
     run mode (single run or service bus)
+  (optional) Pass input in at start of program
+  code linter
 
   We need to connect to Azure
     database 

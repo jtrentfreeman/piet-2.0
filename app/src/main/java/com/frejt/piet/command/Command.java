@@ -6,7 +6,7 @@ import com.frejt.piet.exception.PietCommandNotFoundException;
 import com.frejt.piet.utils.Block;
 
 /**
- * Commands are defined by the transition of colour from one colour block to hte
+ * †Commands are defined by the transition of colour from one colour block to hte
  * next as the interpreter travles through the program.
  * 
  * The number of steps along the Hue Cycle and Lightness Cycle in each

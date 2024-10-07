@@ -40,7 +40,8 @@ public class CommandController {
     }
 
     /**
-     * Pushes the value of the colour block just exited on to the stack.
+     * †Pushes the value of the colour block just exited on to the stack.
+     * 
      * Note that values of colour blocks are not automatically pushed on to the
      * stack - this push operation must be explicitly carried out
      * 
@@ -62,7 +63,7 @@ public class CommandController {
     }
 
     /**
-     * Pops the top value off the stack and discards it.
+     * †Pops the top value off the stack and discards it.
      * 
      * @param stack the stack to modify
      * @param older the first block to be included in the calculation
@@ -83,7 +84,7 @@ public class CommandController {
     }
 
     /**
-     * Pops the top two values off the stack, adds them, and pushes the result back
+     * †Pops the top two values off the stack, adds them, and pushes the result back
      * on the stack
      * 
      * @param stack the stack to modify
@@ -108,7 +109,7 @@ public class CommandController {
     }
 
     /**
-     * Pops the top two values off the stack, calculates the second top value minus
+     * †Pops the top two values off the stack, calculates the second top value minus
      * the top value, and pushes the result back on the stack
      * 
      * @param stack the stack to modify
@@ -133,7 +134,7 @@ public class CommandController {
     }
 
     /**
-     * Pops the top two values off the stack, multiplies them, and pushes the result
+     * †Pops the top two values off the stack, multiplies them, and pushes the result
      * back on the stack.
      * 
      * @param stack the stack to modify
@@ -159,8 +160,9 @@ public class CommandController {
     }
 
     /**
-     * Pops the top two values of fthe stack, calculates the integer division of the
+     * †Pops the top two values of fthe stack, calculates the integer division of the
      * second top value by the top value, and pushes the result back on the stack.
+     * 
      * If a divide by zero occurs, it is handled as an implementation-dependent
      * error, though simply ignoring the command is recommended
      * 
@@ -187,9 +189,11 @@ public class CommandController {
     }
 
     /**
-     * Pops the top two values off the stack, calculates the second top value modulo
+     * †Pops the top two values off the stack, calculates the second top value modulo
      * the top value, and pushes the result back on the stack.
+     * 
      * The result has the same sign as the divisor (the top value).
+     * 
      * If the top value is zero, there is a divide by zero error, which is handled
      * as an implementation-dependent error, though simply ignoring the commmand is
      * recommended.
@@ -218,7 +222,7 @@ public class CommandController {
     }
 
     /**
-     * Replaces the top value of the stack with 0 if it is non-zero, and 1 if it is
+     * †Replaces the top value of the stack with 0 if it is non-zero, and 1 if it is
      * 0.
      * 
      * @param stack the stack to modify
@@ -246,7 +250,7 @@ public class CommandController {
     }
 
     /**
-     * Pops the top two values off the stack, and pushes 1 on to the stack if the
+     * †Pops the top two values off the stack, and pushes 1 on to the stack if the
      * second top value is greater than the top value, and pushes 0 if it is not
      * greater.
      * 
@@ -277,7 +281,7 @@ public class CommandController {
     }
 
     /**
-     * Pops the top value off the stack and rotates the DP clockwise that many steps
+     * †Pops the top value off the stack and rotates the DP clockwise that many steps
      * (anticlockwise if negative).
      * 
      * @param stack the stack to modify
@@ -301,7 +305,7 @@ public class CommandController {
     }
 
     /**
-     * Pops the top value off the stack and toggles the CC that many times (the
+     * †Pops the top value off the stack and toggles the CC that many times (the
      * absolute value of that many times if negative).
      * 
      * @param stack the stack to modify
@@ -325,7 +329,7 @@ public class CommandController {
     }
 
     /**
-     * Pushes a copy of the top value on the stack on to the stack.
+     * †Pushes a copy of the top value on the stack on to the stack.
      * 
      * @param stack the stack to modify
      * @param older the first block to be included in the calculation
@@ -348,7 +352,7 @@ public class CommandController {
     }
 
     /**
-     * Pops the top two values off the stack and "rolls" the remaining stack entries
+     * †Pops the top two values off the stack and "rolls" the remaining stack entries
      * to a depth equal to the second value popped, by a number of rolls equal to
      * the first value popped.
      * 
@@ -431,13 +435,13 @@ public class CommandController {
     }
 
     /**
-     * Reads a value from STDIN as either a number or character, depending on the
+     * †Reads a value from STDIN as either a number or character, depending on the
      * particular incarnation of this command and pushes it on to the stack.
      * 
      * If no input is waiting on STDIN, this is an error and the command is ignored.
      * 
-     * If an integer read does not receive an integer value, this is an error and
-     * the command is ignored.
+     * TODO: If an integer read does not receive an integer value, this is an error 
+     * and the command is ignored.
      * 
      * @param stack the stack to modify
      * @param older the first block to be included in the calculation
@@ -458,7 +462,7 @@ public class CommandController {
     }
 
     /**
-     * Reads a value from STDIN as either a number or character, depending on the
+     * †Reads a value from STDIN as either a number or character, depending on the
      * particular incarnation of this command and pushes it on to the stack.
      * 
      * If no input is waiting on STDIN, this is an error and the command is ignored.
@@ -487,7 +491,7 @@ public class CommandController {
     }
 
     /**
-     * Pops the top value off the stack and prints it to STDOUT as either a number
+     * †Pops the top value off the stack and prints it to STDOUT as either a number
      * or character, depending on the particular incarnation of this command.
      * 
      * @param stack the stack to modify
@@ -511,7 +515,7 @@ public class CommandController {
     }
 
     /**
-     * Pops the top value off the stack and prints it to STDOUT as either a number
+     * †Pops the top value off the stack and prints it to STDOUT as either a number
      * or character, depending on the particular incarnation of this command.
      * 
      * @param stack the stack to modify
@@ -537,16 +541,21 @@ public class CommandController {
     }
 
     /**
-     * Note on the mod command: In the original specification of Piet the result of
+     * †Note on the mod command: In the original specification of Piet the result of
      * a modulo operation with a negative dividend (the second top value popped off
      * the stack) was not explicitly defined.
+     * 
      * I assumed that everyone would assume that the result of (p mod q) would
      * always be equal to ((p + Nq) mod q) for any integer N.
+     * 
      * So:
      * - 5 mod 3 = 2
      * - 2 mod 3 = 2
      * - -1 mod 3 = 2
      * - -4 mod 3 = 2
+     * 
+     * The mod command is thus identical to floored division in Wikipedia's page on 
+     * the modulus operation.
      * 
      * @param dividend the number being "divided" in order to get the remainder
      * @param divisor  the number that is dividing

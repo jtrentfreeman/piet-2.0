@@ -5,7 +5,7 @@ import com.frejt.piet.entity.Codel;
 import com.frejt.piet.utils.color.PietColor;
 
 /**
- * The basic unit of Piet code is the colour block. 
+ * †The basic unit of Piet code is the colour block. 
  * 
  * A colour block is a contiguous block of any number of codels
  * of one colour, bounded by blocks of other colours of by the 

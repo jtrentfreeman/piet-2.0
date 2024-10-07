@@ -1,7 +1,7 @@
 package com.frejt.piet.entity;
 
 /**
- * Piet code takes the form of graphics made up of the recognised colours. 
+ * †Piet code takes the form of graphics made up of the recognised colours. 
  * 
  * Individual pixels of colour are significant in the language, so it is common 
  * for programs to be enlarged for viewing so that the details are easily visible. 
