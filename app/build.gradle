@@ -16,17 +16,17 @@ plugins {
 
 dependencies {
 
+    implementation 'com.azure:azure-cosmos:4.63.3'
+    implementation 'com.azure:azure-identity:1.9.2'
+    implementation 'com.azure:azure-messaging-servicebus:7.13.3'
+    implementation 'com.azure:azure-storage-blob:12.28.0'
+    
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.0'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2'
+
     implementation 'org.apache.logging.log4j:log4j-api:2.24.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.24.1'
     implementation 'org.apache.commons:commons-text'
-
-    implementation 'com.azure:azure-identity:1.9.2'
-    implementation 'com.azure:azure-messaging-servicebus:7.13.3'
-    // implementation 'com.azure:azure-storage-blob:12.23.0'
-    // https://mvnrepository.com/artifact/com.azure/azure-storage-blob
-    implementation 'com.azure:azure-storage-blob:12.28.0'
-
-
 
     implementation project(':utilities')
 

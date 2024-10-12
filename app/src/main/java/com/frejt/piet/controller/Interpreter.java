@@ -1,5 +1,7 @@
 package com.frejt.piet.controller;
 
+import java.nio.file.Path;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -7,6 +9,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.frejt.azure.eventhubs.ServiceBus;
 import com.frejt.azure.storage.BlobStorage;
+import com.frejt.piet.config.ConfigManager;
+import com.frejt.piet.config.HostTypes;
+import com.frejt.piet.entity.Board;
+import com.frejt.piet.exception.PietExecutionException;
+import com.frejt.piet.utils.reader.PietFileReader;
 
 /**
  * This is an interpreter for the programming language Piet.
@@ -35,9 +42,46 @@ public class Interpreter {
     /**
      * Entry point to the program.
      * 
-     * @param args: args[0] - String holding the image's file path
+     * @param args: args[0] - String holding the program's file path
      */
     public static void main(String[] args) {
+
+        HostTypes host = ConfigManager.getInstance().getConfig().getHost();
+
+        if(host.equals(HostTypes.CLOUD)) {
+            runCloud();
+        } else if(host.equals(HostTypes.LOCAL)) {
+            runLocal(args);
+        }
+
+        System.exit(0);
+
+    }
+
+    /**
+     * Runs a single Piet program without connecting to any
+     * external services
+     * 
+     * @param args: args[0] - String holding the program's file path
+     */
+    public static void runLocal(String[] args) {
+
+        try {
+            Path runFile = InterpreterUtils.getRunFile(args);
+
+            PietProgramRunner runner = new PietProgramRunner(runFile);
+            runner.call();
+        } catch(PietExecutionException e) {
+            log.error("Program was uanble to be read: ", e);
+        }
+
+    }
+
+    /**
+     * Forever runs service bus that picks up and runs any Piet
+     * programs that get sent to it
+     */
+    public static void runCloud() {
 
         try {
 
@@ -64,8 +108,7 @@ public class Interpreter {
         } catch(Exception e) {
             log.error("Ran into an unfixable error: ", e);
         }
-
-        System.exit(0);
+    
     }
 }
 
@@ -83,7 +126,6 @@ public class Interpreter {
  * 
  * All of this code was written by myself (Trent Freeman), and no code was taken
  * from any outside sources.
- * 
  * 
  * Also shout of to Sean Szumlanski, a (former) CS professor at UCF.
  * 

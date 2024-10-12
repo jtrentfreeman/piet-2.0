@@ -138,99 +138,119 @@ public class Block {
      * For each {@link DP} direction, determines whether the given {@link Codel}
      * is in the furthest direction for each {@link CC}
      * 
+     * TODO: I saw a cool implementation that kept a list of Codels in a list
+     * When a corner was needed, the list was sorted by X and by Y, then the Codel
+     * in the wanted corner could easily be found.
+     * 
+     * TODO: I'm not confident any of this works. Test
+     * 
+     * TODO: break up into smaller functions
+     *  setCorner()
+     *      setRightCorner
+     *      setBottomCorner
+     *      setLeftCorner
+     *      setTopCorner
+     * 
      * @param coordinate the Codel being checked for the current Block
      */
     public void setCorner(Codel coordinate) {
 
+        int rightTopX = getRightTop().getX();
+        int rightTopY = getRightTop().getY();
+        int rightBottomX = getRightBottom().getX();
+        int rightBottomY = getRightBottom().getY();
+
         // potential for new right column value
-        if (coordinate.getY() >= getRightTop().getY() || getRightTop().getY() == -1) {
-            // if further right
-            if (coordinate.getY() > getRightTop().getY() || getRightTop().getY() == -1) {
-                setRightTop(coordinate);
-            }
-            // if further up
-            if (coordinate.getX() < getRightTop().getX() || getRightTop().getX() == -1) {
-                setRightTop(coordinate);
-            }
-            // if further right
-            if (coordinate.getY() > getRightBottom().getY() || getRightBottom().getY() == -1) {
-                setRightBottom(coordinate);
-            }
-            // if further down
-            if (coordinate.getX() > getRightBottom().getX() || getRightBottom().getX() == -1) {
-                setRightBottom(coordinate);
-            }
+        // TODO: redundant checks, if the coordinate is greater
+        // than the existing codel, we'll never check if the
+        // existing codel is -1
+        // if further right
+        if (rightTopY == -1 || coordinate.getY() > rightTopY) {
+            setRightTop(coordinate);
         }
+        // if further up
+        if (rightTopX == -1 || coordinate.getX() < rightTopX) {
+            setRightTop(coordinate);
+        }
+        // if further right
+        if (rightBottomY == -1 || coordinate.getY() > rightBottomY) {
+            setRightBottom(coordinate);
+        }
+        // if further down
+        if (rightBottomX == -1 || coordinate.getX() > rightBottomX) {
+            setRightBottom(coordinate);
+        }
+
+        int bottomRightX = getBottomRight().getX();
+        int bottomRightY = getBottomRight().getY();
+        int bottomLeftX = getBottomLeft().getX();
+        int bottomLeftY = getBottomLeft().getY();
 
         // potential for new bottom row value
-        if (coordinate.getX() >= getBottomRight().getX() || getBottomRight().getX() == -1) {
-            // if further down
-            if (coordinate.getX() > getBottomRight().getX() || getBottomRight().getX() == -1) {
-                setBottomRight(coordinate);
-            }
-            // if further right
-            if (coordinate.getY() > getBottomRight().getY() || getBottomRight().getY() == -1) {
-                setBottomRight(coordinate);
-            }
-            // if further down
-            if (coordinate.getX() > getBottomLeft().getX() || getBottomLeft().getX() == -1) {
-                setBottomLeft(coordinate);
-            }
-            // if further left
-            if (coordinate.getY() < getBottomLeft().getY() || getBottomLeft().getY() == -1) {
-                setBottomLeft(coordinate);
-            }
+        // if further down
+        if (bottomRightX == -1 || coordinate.getX() > bottomRightX) {
+            setBottomRight(coordinate);
         }
+        // if further right
+        if (bottomRightY == -1 || coordinate.getY() > bottomRightY) {
+            setBottomRight(coordinate);
+        }
+        // if further down
+        if (bottomLeftX == -1 || coordinate.getX() > bottomLeftX) {
+            setBottomLeft(coordinate);
+        }
+        // if further left
+        if (bottomLeftY == -1 || coordinate.getY() < bottomLeftY) {
+            setBottomLeft(coordinate);
+        }
+
+        int leftBottomX = getLeftBottom().getX();
+        int leftBottomY = getLeftBottom().getY();
+        int leftTopX = getLeftTop().getX();
+        int leftTopY = getLeftTop().getY();
 
         // potential for new left column value
-        if (coordinate.getY() <= getLeftBottom().getY() || getLeftBottom().getY() == -1) {
-            // if further left
-            if (coordinate.getY() < getLeftBottom().getY() || getLeftBottom().getY() == -1) {
-                setLeftBottom(coordinate);
-            }
-            // if further down
-            if (coordinate.getX() > getLeftBottom().getX() || getLeftBottom().getX() == -1) {
-                setLeftBottom(coordinate);
-            }
-            // if further left
-            if (coordinate.getY() < getLeftTop().getX() || getLeftTop().getX() == -1) {
-                setLeftTop(coordinate);
-            }
-            // if further up
-            if (coordinate.getX() < getLeftTop().getX() || getLeftTop().getX() == -1) {
-                setLeftTop(coordinate);
-            }
+        // if further left
+        if (leftBottomY == -1 || coordinate.getY() < leftBottomY) {
+            setLeftBottom(coordinate);
+        }
+        // if further down
+        if (leftBottomX == -1 || coordinate.getX() > leftBottomX) {
+            setLeftBottom(coordinate);
+        }
+        // if further left
+        if (leftTopY == -1 || coordinate.getY() < leftTopY) {
+            setLeftTop(coordinate);
+        }
+        // if further up
+        if (leftTopX == -1 || coordinate.getX() < leftTopX) {
+            setLeftTop(coordinate);
         }
 
+        int topLeftX = getTopLeft().getX();
+        int topLeftY = getTopLeft().getY();
+        int topRightX = getTopRight().getX();
+        int topRightY = getTopRight().getY();
+
         // potential for upper-most row
-        if (coordinate.getX() <= getTopLeft().getX() || getTopLeft().getX() == -1) {
+        if (topLeftX == -1 || coordinate.getX() <= topLeftX) {
             // if further up
-            if (coordinate.getX() < getTopLeft().getX() || getTopLeft().getX() == -1) {
+            if (topLeftX == -1 || coordinate.getX() < topLeftX) {
                 setTopLeft(coordinate);
             }
             // if further left
-            if (coordinate.getY() < getTopLeft().getY() || getTopLeft().getY() == -1) {
+            if (topLeftY == -1 || coordinate.getY() < topLeftY) {
                 setTopLeft(coordinate);
             }
             // if further up
-            if (coordinate.getX() < getTopRight().getX() || getTopLeft().getY() == -1) {
+            if (topRightX == -1 || coordinate.getX() < topRightX) {
                 setTopRight(coordinate);
             }
             // if further right
-            if (coordinate.getY() > getTopRight().getY() || getTopRight().getY() == -1) {
+            if (topRightY == -1 || coordinate.getY() > topRightY) {
                 setTopRight(coordinate);
             }
         }
     }
-
-	// public PietColor codelIntoString(String val) {
-    //     for(PietColor c : PietColor.values()) {
-    //         if(c.getRBG().equals(val)) {
-    //             return c;
-    //         }
-    //     }
-
-    //     return Color.WHITE;
-    // }
 
 }

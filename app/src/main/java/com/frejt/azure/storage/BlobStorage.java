@@ -13,21 +13,22 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.frejt.piet.config.ConfigManager;
 
 public class BlobStorage {
 
     private static final Logger log = LogManager.getLogger(BlobStorage.class);
 
-    private static final String PIET_STORAGE_ACCOUNT_ENDPOINT = "https://frejtpietstorage.blob.core.windows.net/";
+    private static final String PIET_STORAGE_ACCOUNT_ENDPOINT = ConfigManager.getInstance().getConfig().getAzureStorageAccountURL();
 
-    private static final String PIET_CONTAINER = "piet-files";
-
-    private static final String CONNECTION_STRING_PATH = "app\\src\\main\\resources\\storage_connection_string.txt";
+    private static final String PIET_CONTAINER = ConfigManager.getInstance().getConfig().getAzureStorageFileContainer();
+    
+    private static final String CONNECTION_STRING_PATH = ConfigManager.getInstance().getConfig().getAzureStorageConnectionStringPath();
 
     private BlobServiceClient client;
 
     public BlobStorage() throws IOException {
-        buildBlobClient();
+        buildBlobClient(); 
     }
 
     private void buildBlobClient() throws IOException {

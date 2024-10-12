@@ -31,10 +31,8 @@ public class BoardRunner {
 
     public BoardRunner(Board board, UUID uuid) {
 
-        Programmer.newProgram(uuid);
-
-        program = Programmer.getProgram(uuid);
-        director = Programmer.getProgram(uuid).getDirector();
+        program = Programmer.newProgram(uuid);
+        director = program.getDirector();
 
         this.board = board;
         this.uuid = uuid;
@@ -46,7 +44,7 @@ public class BoardRunner {
      *
      * @param board the Board, holding a grid of {@link Codel}s to be traversed
      */
-    public String runBoard() throws PietExecutionException {
+    public void runBoard() throws PietExecutionException {
 
         BlockSet blocks = prepareForRun();
         blocks.rotateBlocks();
@@ -93,8 +91,6 @@ public class BoardRunner {
 
             nextCodel = getNextCodel(blocks.getFirst(), 0);
         }
-
-        return program.getOutput();
 
     }
 

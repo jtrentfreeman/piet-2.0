@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -23,7 +22,9 @@ import com.azure.messaging.servicebus.ServiceBusFailureReason;
 import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
 import com.frejt.azure.storage.BlobStorage;
+import com.frejt.piet.config.ConfigManager;
 import com.frejt.piet.controller.PietProgramRunner;
+import com.frejt.piet.entity.PietOutput;
 import com.frejt.piet.exception.PietExecutionException;
 
 /**
@@ -33,11 +34,11 @@ public class ServiceBus {
 
     private static final Logger log = LogManager.getLogger(ServiceBus.class);
 
-    private static final String PIET_MESSAGES_QUEUE = "piet-messages";
+    private static final String PIET_MESSAGES_QUEUE = ConfigManager.getInstance().getConfig().getAzureServiceBusMessagesQueue();
 
     private ExecutorService service;
 
-    private List<Future<String>> output;
+    private List<Future<PietOutput>> output;
 
     private ServiceBusProcessorClient client;
 
@@ -48,12 +49,12 @@ public class ServiceBus {
         buildProcessorClient();
     }
 
-    public List<Future<String>> getFutures() {
+    public List<Future<PietOutput>> getFutures() {
         return this.output;
     }
 
     private void buildProcessorClient() throws IOException {
-        String connectionString = Files.readString(Paths.get("app\\src\\main\\resources\\servicebus_connection_string.txt"));
+        String connectionString = Files.readString(ConfigManager.getInstance().getConfig().getAzureServiceBusConnectionStringPath());
         
         this.client = new ServiceBusClientBuilder()
             .connectionString(connectionString)
@@ -74,8 +75,8 @@ public class ServiceBus {
         log.info("Stop processing new messages");
         this.client.close();
 
-        for(Future<String> future : output) {
-            log.info(future.get());
+        for(Future<PietOutput> future : output) {
+            log.info(future.get().getStdOut());
         }
 
     }
@@ -83,23 +84,26 @@ public class ServiceBus {
     private void processMessage(ServiceBusReceivedMessageContext context) {
 
         String messageBody = context.getMessage().getBody().toString();
-        log.info("Received new message: [" + messageBody + "]");
+        log.info("Received new message to process file: [" + messageBody + "]");
+
+        Path runFile;
 
         try {
             BlobStorage storage = new BlobStorage();
-            Path runFile = storage.downloadBlob(messageBody);
-
-            log.info("Downloaded file, preparing to run: [" + runFile.toString() + "]");
-            
-            PietProgramRunner runner = new PietProgramRunner(runFile);
-            output.add(service.submit(runner));
+            runFile = storage.downloadBlob(messageBody);
         } catch (IOException e) {
             log.error("Failed to process message: ", e.getMessage());
+            return;
         }
+
+        log.info("Downloaded file, preparing to run: [" + runFile.toString() + "]");
+        
+        PietProgramRunner runner = new PietProgramRunner(runFile);
+        output.add(service.submit(runner));
 
     }
 
-    private static void processError(ServiceBusErrorContext context) {
+    private void processError(ServiceBusErrorContext context) {
         System.out.printf("Error when receiving messages from namespace: '%s'. Entity: '%s'%n",
             context.getFullyQualifiedNamespace(), context.getEntityPath());
 
@@ -130,6 +134,5 @@ public class ServiceBus {
                 reason, context.getException());
         }
     }
-
     
 }

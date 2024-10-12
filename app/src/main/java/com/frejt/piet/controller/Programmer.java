@@ -17,18 +17,19 @@ import java.util.UUID;
  */
 public class Programmer {
 
-    private static Map<UUID, Program> programs = new HashMap<>();
+    private static Map<UUID, Program> activePrograms = new HashMap<>();
 
     public static Program getProgram(UUID uuid) {
-        return programs.get(uuid);
+        return activePrograms.get(uuid);
     }
 
-    public static void newProgram(UUID uuid) {
-        programs.put(uuid, new Program());
+    public static Program newProgram(UUID uuid) {
+        activePrograms.put(uuid, new Program());
+        return activePrograms.get(uuid);
     }
 
     public static void removeProgram(UUID uuid) {
-        programs.remove(uuid);
+        activePrograms.remove(uuid);
     }
     
 }
